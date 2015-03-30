@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<title>Lab 7 Login</title>
+        <meta charset="UTF-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	</head>
+	<body>
+	<br />
+	<section>
+		<h1 id = "top" >Login</h1>
+		<form name = "validateLogin" accept-charset="utf-8" action="" id="validateLogin">
+			<div class="login">
+				<input type="text" name = "username" placeholder="Username" id="username" value="">
+				<input type="text" name = "password" placeholder="Password" id="password" value="">
+				<input type="submit" value="Submit">
+			</div>
+		</form>
+	</section>
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	</body>
+<script type="text/javascript">
+            $(document).ready(function() {
+            $('#validateLogin').submit(function() {
+				var username = document.forms["validateLogin"]["username"].value;
+				var password = document.forms["validateLogin"]["password"].value;
+
+                username = "tjj";
+                password = "tyler";
+                
+				if ((username ==null || username =="") || 
+                    (password ==null || password =="")) {
+                    alert("Username and password must be filled out");
+                    return false;
+                }
+                
+                var JSONObj= {
+                    "username": username, 
+                    "password": password
+                };
+                
+                var JSONStr = JSON.stringify(JSONObj);
+                alert(JSONStr);
+                $.ajax({
+                    type: 'POST',
+                    url: 'checkLogin.php',
+                    data: {'data':JSONStr},
+                    ContentType: "application/json; charset=utf-8",
+                    //dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+                        alert("Heard reply from checkLogin.php"+"\n"+data);
+                        if (data=="true"){
+                            alert("TODO: call loadViewPosts");
+                            
+                            $('#validateLogin').hide();
+                            $console.log("<h1 id='top'>Welcome "+JSONObj['username']+"</h1>");
+                        }
+                        else {
+                            alert("Invalid username/password entered. Please try again.");
+                        }
+                        //TODO: IF LOGIN SUCCESSFUL, LOAD viewPosts.php
+                        //loadViewPosts(username);
+                    },
+                    error: function (xhr, desc, err) {
+                        //TODO: IF LOGIN UNSUCCESSFUL, ALERT USERNAME OR PASSWORD NOT FOUND.
+                        alert("No reply heard from checkLogin.php");
+                        alert(desc);
+                        alert(err);
+                        console.log(desc);
+                        console.log(err);  
+                    }
+                });         
+			});
+            function loadViewPosts(uname){
+                
+                $.ajax({
+                type: 'POST',
+                data: {'data':uname},
+                url: 'viewPosts.php',
+                //dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    console.log("Heard reply from viewPosts.php");
+                    console.log(data);
+                },
+                error: function (xhr, desc, err) {
+                    console.log("No reply from viewPosts.php");
+                    console.log(desc);
+                    console.log(err);  
+                }
+                });
+            }
+        }); // end of document ready function
+		</script>
+	</html>
