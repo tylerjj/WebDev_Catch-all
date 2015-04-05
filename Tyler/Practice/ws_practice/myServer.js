@@ -31,7 +31,7 @@ server.listen(1234, function() {
 //		that we created. 
 //	a2. We need to require the websocket library to do this.
 var WebSocketServer = require('websocket').server;
-wServer = new WebSocketServer({
+wsServer = new WebSocketServer({
 	httpServer : server
 });
 
@@ -106,6 +106,6 @@ wsServer.on('request', function(r)
 	// END OF SECTION 4: We now have a basic system setup on the server side that should
 	//					 accept web socket connections and broadcast our message out to every
 	//					 connected client. This is the end of the back end.
-}
+});
 // END OF SECTION 3: We now move on to the bulk of code that
 //					 will fit within these connections.
