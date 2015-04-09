@@ -1,0 +1,15 @@
+extends layout
+
+head
+    title My Chat Application
+block content
+  h1= title
+  p Welcome to #{title}
+  div(id="chatlog")
+    button#myButton(
+        onclick="sendMessage()"
+        style= 'width = 100pix; height = 100pix;'
+        value="Send Message"
+    ) Send Message
+    input(type="text", id="message")
+    

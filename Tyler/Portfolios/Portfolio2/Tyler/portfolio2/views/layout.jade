@@ -1,0 +1,10 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    block scripts
+        script(type="text/javascript" src="myClient.js")
+        script(src='/javascripts/myClient.js')
+  body
+    block content
