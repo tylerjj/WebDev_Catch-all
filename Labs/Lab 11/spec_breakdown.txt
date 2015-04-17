@@ -1,0 +1,40 @@
+Session Data:
+	- username : ...
+
+onlineUsers JSON
+	{"onlineUsers" : [{"username" : ...]}
+
+Login JSON
+	{"login" : {"username": ..., "password": ...}}
+
+Post JSON
+	{"post" : {"author": ..., "timestamp" : ...}}
+
+View
+	Before Login
+		- "login" form containing two text fields and a submit button
+			- login on submission:
+				- load new form and hide old form.
+				- update list of onlineUsers (websockets)
+	Upon Login
+	    - "postPage" form
+		- list of posts after successful login
+			- post element onClick event:
+				- If post.author is same as session.username
+					- post item becomes a text field 
+					  containing original post data.
+					- On enter key pressed
+						- concatenate (edited on "new timestamp goes here") 
+						  to the end of post
+						- update list of posts (websockets)
+						- post item becomes immutable again
+		- list of logged-in users after successful login
+		- "Make a Post" button
+			- Turns into a text field
+			- On enter key pressed
+				- update list of posts (websockets)
+				- "Make a Post" button replaces text field.
+		- "Logout" button
+			- update list of onlineUsers (websockets)
+			- clear session data
+			- hide current form, load login form
