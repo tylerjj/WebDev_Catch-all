@@ -8,7 +8,7 @@ Login JSON
 	{"login" : {"username": ..., "password": ...}}
 
 Post JSON
-	{"post" : {"author": ..., "timestamp" : ...}}
+	{"post" : {"author": ..., "data": ..., "timestamp" : ...}}
 
 View
 	Before Login
