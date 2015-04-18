@@ -3,19 +3,14 @@
 	<head>
 		<title>Lab 11 Login</title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script>
-            function onLoginSuccess() {
-                document.getElementById("loginDiv").style.display="none";
-                document.getElementById("postDiv").style.display="block";
-            }
-            function onLogoutSuccess() {
-                document.getElementById("postDiv").style.display="none";
-                document.getElementById("loginDiv").style.display="block";
-            }
-        </script>
         <style>
             .loginDiv {
                 display: block;
+                font-family:monospace;
+            }
+            .loginFailed {
+                visibility:hidden;
+                color:crimson;
             }
             .postDiv {
                 display: none;
@@ -28,41 +23,79 @@
             <h1>
                 Lab 11 Login Div
             </h1>
+            <p class="loginFailed" id="loginFailed">Username/Password not found. Please try again.</p>
             <input type="text" name = "username" placeholder="Username" id="username" value="">
             <input type="text" name = "password" placeholder="Password" id="password" value="">
             <button id = "submitButton" onClick=validateLogin()>Submit</button>
-            <script>
-                function validateLogin() {
-                     //do stuff
-                    onLoginSuccess();
-                }
-            </script>
         </div>
+        
+        
         <div class = "postDiv" id = "postDiv">
             <h1>
                 Lab 11 Post Div
             </h1>
-            <div id="onlineUsers">
-                <script>
-                    function myFunction(arr) {
-                        var out = "";
-                        var i;
-                        for(i = 0; i<arr.length; i++) {
-                            out += arr[i].display + '<br>';
-                        }
-                        document.getElementById("onlineUsers").innerHTML = out;
-                    }
-                </script>
+            <div id="postListDiv"></div>
+                <dl id="postList">
+                </dl>
+            <div id="onlineListDiv">
+                <ul id="onlineList">
+                </ul>
             </div>
             
             <button id = "makePostButton">Make a Post</button>
             <button id = "logoutButton" onClick=logout()>Logout</button>
-            <script>
-                function logout() {
-                    //do stuff
-                    onLogoutSuccess();
-                }
-            </script>
         </div>
         </body>
+        <script>
+            function validateLogin() {
+                var pword;
+                var uname;
+                //get password/username from loginDiv
+                
+                
+                //websocket check to server
+                
+                //validateLogin should send back either true or false. 
+                if (true){
+                    onLoginSuccess();
+                }
+                else {
+                   onLoginFail(); 
+                }
+            }
+            function onLoginSuccess() {
+                document.getElementById("loginDiv").style.display="none";
+                document.getElementById("postDiv").style.display="block";
+            }
+            function onLoginFail() {
+                document.getElementById("loginFailed").style.visibility="visible";
+            }
+        </script>
+        <script>
+
+            function displayPostList(arr) {
+                
+            }
+            function appendPost(author, message) {
+                
+            }
+            function displayOnlineList(arr) {
+                var out = "";
+                var i;
+                for(i = 0; i<arr.length; i++) {
+                    out += arr[i].display + '<br>';
+                }
+                document.getElementById("onlineListDiv").innerHTML = out;
+            }
+            function logout() {
+                //websocket update to server
+                onLogoutSuccess();
+            }
+            function onLogoutSuccess() {
+                document.getElementById("postDiv").style.display="none";
+                //document.getElementById("loginFailed").style.visibility="hidden";
+                document.getElementById("loginDiv").style.display="block";
+                document.getElementById("loginFailed").style.visibility="hidden";
+            }
+        </script>
 </html>
