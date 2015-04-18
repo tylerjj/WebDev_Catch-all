@@ -3,6 +3,7 @@
 	<head>
 		<title>Lab 11 Login</title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://localhost:5000/socket.io/socket.io.js"></script>
         <style>
             .loginDiv {
                 display: block;
@@ -18,18 +19,15 @@
         </style>
         </head>
     <body>
-
         <div class = "loginDiv" id = "loginDiv">
             <h1>
                 Lab 11 Login Div
             </h1>
             <p class="loginFailed" id="loginFailed">Username/Password not found. Please try again.</p>
-            <input type="text" name = "username" placeholder="Username" id="username" value="">
-            <input type="text" name = "password" placeholder="Password" id="password" value="">
-            <button id = "submitButton" onClick=validateLogin()>Submit</button>
+            <input type="text" name = "username" placeholder="Username" id="username">
+            <input type="text" name = "password" placeholder="Password" id="password">
+            <button class = "submitButton" id = "submitButton">Submit</button>
         </div>
-        
-        
         <div class = "postDiv" id = "postDiv">
             <h1>
                 Lab 11 Post Div
@@ -42,60 +40,124 @@
                 </ul>
             </div>
             
-            <button id = "makePostButton">Make a Post</button>
-            <button id = "logoutButton" onClick=logout()>Logout</button>
+            <button class = "makePostButton" id = "makePostButton">Make a Post</button>
+            <button class = "logoutButton" id = "logoutButton">Logout</button>
         </div>
         </body>
-        <script>
-            function validateLogin() {
-                var pword;
-                var uname;
-                //get password/username from loginDiv
-                
-                
-                //websocket check to server
-                
-                //validateLogin should send back either true or false. 
-                if (true){
-                    onLoginSuccess();
-                }
-                else {
-                   onLoginFail(); 
-                }
+    <script>
+$(document).ready(function() {
+    
+    /** SOCKETS BLOCK **/
+        //Connect to websocket server.
+        var socket = io.connect('ws://localhost:5000');
+        
+        //Listen for what to do after a login attempt.
+        socket.on('loginResponse', function(loginSuccess) {
+            if (loginSuccess) {
+                console.log("Login successful.");
+                onLoginSuccess();
+            } else onLoginFailure();
+        });
+    
+        // Listen for data to initialize page.
+        socket.on('initializePage', function(data){
+            
+        });
+    
+        // Listen for data to alter post list.
+        socket.on('updatePostList', function(data){
+            
+        });
+    
+        // Listen for data to alter online users list.
+        socket.on('updateOnlineUsersList', function(data){
+            
+        });
+    
+        console.log("Socket handlers have been set up.");
+    
+    /** BUTTON HANDLERS BLOCK **/
+    
+        // Submit button (submits a login attempt)
+        $('#submitButton').click(function() {
+            //Get username and password. 
+            var uname = $('#username').val();
+            var pword = $('#password').val();
+            console.log("username and password: "+uname+", "+pword);
+            //get password/username from loginDiv
+            if ((uname ==null || uname =="") || 
+                (pword ==null || pword=="")) {
+                alert("Username and password must be filled out");
+                return false;
             }
-            function onLoginSuccess() {
-                document.getElementById("loginDiv").style.display="none";
-                document.getElementById("postDiv").style.display="block";
-            }
-            function onLoginFail() {
-                document.getElementById("loginFailed").style.visibility="visible";
-            }
-        </script>
-        <script>
+            
+            var loginJSONObj = {
+                "username": uname,
+                "password": pword
+            };
+            
+            var loginJSONStr = JSON.stringify(loginJSONObj);
+            
+            console.log("JSON Obj: "+loginJSONObj);
+            console.log("JSON String: "+loginJSONStr);
+            //websocket check to server
+            socket.emit('validateLogin', loginJSONStr);
 
-            function displayPostList(arr) {
-                
+            console.log("validateLogin was emitted.");
+            return;
+        });
+    
+        //
+        $('#logoutButton').click(function(){
+            onLogoutSuccess();
+        });
+    
+        function onLoginSuccess() {
+            document.getElementById("loginDiv").style.display="none";
+            document.getElementById("postDiv").style.display="block";
+        }
+        function onLoginFailure() {
+            document.getElementById("loginFailed").style.visibility="visible";
+        }
+    
+    
+        function displayPostList(arr) {
+
+        }
+        function appendPost(author, message) {
+
+        }
+        function displayOnlineList(arr) {
+            var out = "";
+            var i;
+            for(i = 0; i<arr.length; i++) {
+                out += arr[i].display + '<br>';
             }
-            function appendPost(author, message) {
-                
-            }
-            function displayOnlineList(arr) {
-                var out = "";
-                var i;
-                for(i = 0; i<arr.length; i++) {
-                    out += arr[i].display + '<br>';
-                }
-                document.getElementById("onlineListDiv").innerHTML = out;
-            }
-            function logout() {
-                //websocket update to server
-                onLogoutSuccess();
-            }
-            function onLogoutSuccess() {
-                document.getElementById("postDiv").style.display="none";
-                //document.getElementById("loginFailed").style.visibility="hidden";
-                document.getElementById("loginDiv").style.display="block";
-                document.getElementById("loginFailed").style.visibility="hidden";
-            }
+            document.getElementById("onlineListDiv").innerHTML = out;
+        }
+        function logout() {
+            //websocket update to server
+            onLogoutSuccess();
+        }
+        function onLogoutSuccess() {
+            document.getElementById("postDiv").style.display="none";
+            document.getElementById("loginDiv").style.display="block";
+            document.getElementById("loginFailed").style.visibility="hidden";
+        }
+        socket.on('loginResponse', function(loginSuccess) {
+            if (loginSuccess) {
+                onLoginSuccess();
+            } else onLoginFailure();
+        });
+        socket.on('initializePage', function(data){
+            
+        });
+        socket.on('updatePostList', function(data){
+            
+        });
+        socket.on('updateOnlineUsersList', function(data){
+            
+        });
+});
         </script>
 </html>
