@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<title>Lab 11 Login</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+            function onLoginSuccess() {
+                document.getElementById("loginDiv").style.display="none";
+                document.getElementById("postDiv").style.display="block";
+            }
+            function onLogoutSuccess() {
+                document.getElementById("postDiv").style.display="none";
+                document.getElementById("loginDiv").style.display="block";
+            }
+        </script>
+        <style>
+            .loginDiv {
+                display: block;
+            }
+            .postDiv {
+                display: none;
+            }
+        </style>
+        </head>
+    <body>
+
+        <div class = "loginDiv" id = "loginDiv">
+            <h1>
+                Lab 11 Login Div
+            </h1>
+            <input type="text" name = "username" placeholder="Username" id="username" value="">
+            <input type="text" name = "password" placeholder="Password" id="password" value="">
+            <button id = "submitButton" onClick=validateLogin()>Submit</button>
+            <script>
+                function validateLogin() {
+                     //do stuff
+                    onLoginSuccess();
+                }
+            </script>
+        </div>
+        <div class = "postDiv" id = "postDiv">
+            <h1>
+                Lab 11 Post Div
+            </h1>
+            <div id="onlineUsers">
+                <script>
+                    function myFunction(arr) {
+                        var out = "";
+                        var i;
+                        for(i = 0; i<arr.length; i++) {
+                            out += arr[i].display + '<br>';
+                        }
+                        document.getElementById("onlineUsers").innerHTML = out;
+                    }
+                </script>
+            </div>
+            
+            <button id = "makePostButton">Make a Post</button>
+            <button id = "logoutButton" onClick=logout()>Logout</button>
+            <script>
+                function logout() {
+                    //do stuff
+                    onLogoutSuccess();
+                }
+            </script>
+        </div>
+        </body>
+</html>

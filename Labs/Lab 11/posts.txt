@@ -1,0 +1,2 @@
+{"author":"testUN1", "data": "This is the first test post.", "timestamp":  "1429304719236"}
+{"author":"testUN2", "data": "This is the second test post.", "timestamp": "1429304782854"}
