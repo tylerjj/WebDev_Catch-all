@@ -6,9 +6,13 @@ var io = require('socket.io').listen(5000);
 
 console.log("Listening on port 5000");
 
+var usersOnline = [];
 io.sockets.on('connection', function(socket) {
     console.log("Connection has been established.");
 
+    //TODO: SET USERNAME VARIABLE OUT HERE. On connection closed, emit logout from close handler
+    var thisUsername = "";
+    
     // Check login information against users.txt.
     socket.on('validateLogin', function(content) {
         // Take in a {username: ..., password: ...} JSON.
@@ -36,6 +40,10 @@ io.sockets.on('connection', function(socket) {
                     console.log(JSON.stringify(userJSON));
                     if (content.trim() == JSON.stringify(userJSON)){
                         console.log("A match has been found");
+                        thisUsername=userJSON["username"];
+                        if (usersOnline.indexOf(thisUsername)==-1){
+                            usersOnline.push(userJSON["username"]);
+                        }
                         match = true;
                     }
                 });
@@ -45,6 +53,7 @@ io.sockets.on('connection', function(socket) {
                         // On success, emit success response.
                         console.log("Sending success response back.");
                         socket.emit('loginResponse', true);
+                        updateListOfOnlineUsers();
                     } else {
                         console.log("Sending failure response back.");
                         // Otherwise, emit failure response.
@@ -61,6 +70,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('loadData', function(content) {
+        // add client's username to 
         var data;
         socket.emit('initializePage', data);
     });
@@ -71,12 +81,28 @@ io.sockets.on('connection', function(socket) {
     });
     
     socket.on('logout', function(content) {
-        var data;
-        socket.emit('updateOnlineUsersList', function(data){
-            
-        });
-        socket.on('disconnect', function(){
-            console.log("Client has been disconnected.");
-        });
+        var username = JSON.parse(content).username;
+        var index = usersOnline.indexOf(username);
+        delete usersOnline[index];
+        console.log("Client has logged out.");
+        updateListOfOnlineUsers();
     });
+    
+    socket.on('disconnect', function(){
+        var index = usersOnline.indexOf(thisUsername);
+        if (index!==-1){
+            delete usersOnline[index];
+            updateListOfOnlineUsers();
+            console.log("Client removed from list of users online.");
+        }
+        console.log("Client has been disconnected.");
+    });
+    function updateListOfOnlineUsers(){
+        var data = {"onlineUsers":[]};
+        for (var item in usersOnline){
+            data["onlineUsers"].push(usersOnline[item]);
+        }
+        data = JSON.stringify(data);
+        io.sockets.emit('updateOnlineUsersList', data);
+    }
 });

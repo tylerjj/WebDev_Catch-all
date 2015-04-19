@@ -15,6 +15,7 @@
             }
             .postDiv {
                 display: none;
+                font-family:monospace;
             }
         </style>
         </head>
@@ -66,19 +67,37 @@ $(document).ready(function() {
     
         // Listen for data to alter post list.
         socket.on('updatePostList', function(data){
-            
+            console.log("Data: "+data);
+            var postsList = JSON.parse(data);
+            var items = [];
+            for (var item in usersList["post"]){
+                var value = "<li>"+postsList["post"][item]+"</li>";
+                console.log("Item in user list: " + usersList["post"][item]);
+                items.push(value);
+            }
+            $('#onlineList').empty();
+            $('#onlineList').append(items);            
         });
     
         // Listen for data to alter online users list.
         socket.on('updateOnlineUsersList', function(data){
-            
+            console.log("Data: "+data);
+            var usersList = JSON.parse(data);
+            var items = [];
+            for (var item in usersList["onlineUsers"]){
+                var value = "<li>"+usersList["onlineUsers"][item]+"</li>";
+                console.log("Item in user list: " + usersList["onlineUsers"][item]);
+                items.push(value);
+            }
+            $('#onlineList').empty();
+            $('#onlineList').append(items);
         });
     
         console.log("Socket handlers have been set up.");
     
     /** BUTTON HANDLERS BLOCK **/
     
-        // Submit button (submits a login attempt)
+        // Submit button handler (submits a login attempt)
         $('#submitButton').click(function() {
             //Get username and password. 
             var uname = $('#username').val();
@@ -107,8 +126,13 @@ $(document).ready(function() {
             return;
         });
     
-        //
+        // Logout button handler.
         $('#logoutButton').click(function(){
+            var uname = $('#username').val();
+            var usernameJSONStr = JSON.stringify({"username":uname});
+            socket.emit('logout', usernameJSONStr,function(){
+                console.log("Logout successful.");
+            });
             onLogoutSuccess();
         });
     
