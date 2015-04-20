@@ -17,6 +17,28 @@
                 display: none;
                 font-family:monospace;
             }
+            #listDiv {
+            }
+            #postListDiv {
+                background-color:forestgreen;
+                font-family:sans-serif;
+                float:left;
+            }
+            #onlineListDiv {
+                background-color:blue;
+                font-family:sans-serif;
+                float:right;
+            }
+            #postButtonsDiv {
+               background-color:red;
+               align-self: auto;
+            }
+            .postText {
+                display: none;
+            }
+            .makePostButton {
+                display: block;
+            }
         </style>
         </head>
     <body>
@@ -33,16 +55,23 @@
             <h1>
                 Lab 11 Post Div
             </h1>
-            <div id="postListDiv"></div>
-                <dl id="postList">
-                </dl>
-            <div id="onlineListDiv">
-                <ul id="onlineList">
-                </ul>
+            <div id="listsDiv">
+                <div id="postListDiv">
+                    <h1>Posts</h1>
+                    <dl id="postList">
+                    </dl>
+                </div>
+                <div id="onlineListDiv">
+                    <h1>Users Online</h1>
+                    <ul id="onlineList">
+                    </ul>
+                </div>
             </div>
-            
-            <button class = "makePostButton" id = "makePostButton">Make a Post</button>
-            <button class = "logoutButton" id = "logoutButton">Logout</button>
+            <div id="postButtonsDiv">
+                <textarea class = "postText" id="postText" rows=10 cols=30></textarea>
+                <button class = "makePostButton" id = "makePostButton">Make a Post</button>
+                <button class = "logoutButton" id = "logoutButton">Logout</button>
+            </div>
         </div>
         </body>
     <script>
@@ -69,14 +98,20 @@ $(document).ready(function() {
         socket.on('updatePostList', function(data){
             console.log("Data: "+data);
             var postsList = JSON.parse(data);
+            
             var items = [];
-            for (var item in usersList["post"]){
-                var value = "<li>"+postsList["post"][item]+"</li>";
-                console.log("Item in user list: " + usersList["post"][item]);
+            for (var item in postsList["posts"]){
+                var value = "<li>" + "[" + 
+                                        JSON.parse(postsList["posts"][item]).author + 
+                                     "]: " + 
+                            JSON.parse(postsList["posts"][item]).data +
+                            "</li>";
+                
+                console.log("Item in user list: " + postsList["posts"][item]);
                 items.push(value);
             }
-            $('#onlineList').empty();
-            $('#onlineList').append(items);            
+            $('#postList').empty();
+            $('#postList').append(items);            
         });
     
         // Listen for data to alter online users list.
@@ -126,6 +161,12 @@ $(document).ready(function() {
             return;
         });
     
+        $('#makePostButton').click(function(){
+            $('#postText').val("");
+            $('#makePostButton').css("display","none");
+            $('#postText').css("display","block");
+        });
+    
         // Logout button handler.
         $('#logoutButton').click(function(){
             var uname = $('#username').val();
@@ -136,9 +177,27 @@ $(document).ready(function() {
             onLogoutSuccess();
         });
     
+        $('#postDiv').delegate("textarea", "keydown", function(e){
+            if (e.which==13 && !e.shiftKey){
+                
+                console.log("Enter button was pressed.");
+                var author = $('#username').val();
+                var data = $('#postText').val();
+                var timestamp = new Date();
+                
+                var postJSONObj = {"author":author,"data":data,"timestamp":timestamp};
+                console.log("Post object sent: "+JSON.stringify(postJSONObj));
+                $('#postText').css("display","none");
+                $('#makePostButton').css("display","block");
+                $('#postText').val("");
+                //send postVal
+                socket.emit("newPost", postJSONObj);
+            }
+        });
         function onLoginSuccess() {
             document.getElementById("loginDiv").style.display="none";
             document.getElementById("postDiv").style.display="block";
+            socket.emit("loadData", $('#username').val());
         }
         function onLoginFailure() {
             document.getElementById("loginFailed").style.visibility="visible";
