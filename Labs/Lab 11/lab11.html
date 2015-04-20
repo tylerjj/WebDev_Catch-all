@@ -13,30 +13,45 @@
                 visibility:hidden;
                 color:crimson;
             }
-            .postDiv {
+            #postDiv {
+                /*background-color:yellow;*/
+                float:left;
                 display: none;
                 font-family:monospace;
+            }
+            #postHeaderDiv {
+                /*background-color:darkmagenta;*/
+                float:right;
+            }
+            .logoutButton {
+                float:right;
             }
             #listDiv {
             }
             #postListDiv {
-                background-color:forestgreen;
+                /*background-color:forestgreen;*/
                 font-family:sans-serif;
                 float:left;
             }
+            .logoutButton {
+                float:right;
+            }
             #onlineListDiv {
-                background-color:blue;
+                /*background-color:blue;*/
                 font-family:sans-serif;
                 float:right;
             }
             #postButtonsDiv {
-               background-color:red;
+                clear:both;
+                float:left;
+               /*background-color:red;*/
                align-self: auto;
             }
             .postText {
                 display: none;
             }
             .makePostButton {
+                float:left;
                 display: block;
             }
         </style>
@@ -52,6 +67,14 @@
             <button class = "submitButton" id = "submitButton">Submit</button>
         </div>
         <div class = "postDiv" id = "postDiv">
+            <div id="postHeaderDiv">
+                <h1>
+                    First Header Div
+                </h1>
+                <h2>
+                    <button class ="logoutButton" id="logoutButton">Logout</button>
+                </h2>
+            </div>
             <h1>
                 Lab 11 Post Div
             </h1>
@@ -68,9 +91,9 @@
                 </div>
             </div>
             <div id="postButtonsDiv">
+                <h1>Buttons Div</h1>
                 <textarea class = "postText" id="postText" rows=10 cols=30></textarea>
                 <button class = "makePostButton" id = "makePostButton">Make a Post</button>
-                <button class = "logoutButton" id = "logoutButton">Logout</button>
             </div>
         </div>
         </body>
@@ -101,13 +124,9 @@ $(document).ready(function() {
             
             var items = [];
             for (var item in postsList["posts"]){
-                var value = "<li>" + "[" + 
-                                        JSON.parse(postsList["posts"][item]).author + 
-                                     "]: " + 
-                            JSON.parse(postsList["posts"][item]).data +
-                            "</li>";
+                var value = "<li>" + "["+ postsList["posts"][item].author+"]: "+postsList["posts"][item].data+"</li>";
                 
-                console.log("Item in user list: " + postsList["posts"][item]);
+                console.log("Item in user list: " + JSON.stringify(postsList["posts"][item]));
                 items.push(value);
             }
             $('#postList').empty();

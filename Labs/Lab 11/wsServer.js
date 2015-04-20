@@ -153,7 +153,6 @@ io.sockets.on('connection', function(socket) {
     // incoming JSON: {"username" : ...}
     socket.on('loadData', function(content) {
         var data;
-        
         updateListOfPosts();
         //socket.emit('initializePage', data);
     });
@@ -170,9 +169,12 @@ io.sockets.on('connection', function(socket) {
         // Add post to the postsList array.
         
         // Sort posts
-        
+        var id = postsList.size-1;
+        var newJSON = {"id":id,"author":content.author,"data":content.data,"timestamp":content.timestamp};
+        postsList.push(newJSON);
         // Emit an updatePostList for all users.
-        io.sockets.emit('updatePostList', data);
+        updateListOfPosts();
+        //io.sockets.emit('updatePostList', data);
     });
     
     // TODO: HANDLES AN EDIT POST REQUEST SENT FROM CLIENT
