@@ -170,7 +170,7 @@ io.sockets.on('connection', function(socket) {
         var id = postsList.length;
         var newJSON = {"id":id,"author":content.author,"data":content.data,"timestamp":content.timestamp};
         postsList.push(newJSON);
-		fs.appendFile(file,'\r\n' + JSON.stringify(newJSON), encoding='utf8', function(err){
+		fs.appendFile(file,JSON.stringify(newJSON)+'\r\n', encoding='utf8', function(err){
 				if(err) throw err;
 			});
         // Emit an updatePostList for all users.
@@ -181,24 +181,33 @@ io.sockets.on('connection', function(socket) {
     // TODO: HANDLES AN EDIT POST REQUEST SENT FROM CLIENT
     // incoming JSON: {"id": ..., "author": ..., "data": ..., "timestamp": ...}
     socket.on('editPost', function(content) {
-        // Convert timestamp to index
-		for(var i = 0; i < postsList.length; i++){
-			if(postsList[i].id == content.id){
-				postsList[i].data = content.data;
-			}
-		}
-		updateListOfPosts();
-		//var file = path.normalize('.'+'/posts.txt');
-		
-		//overwrite the old posts.txt file
-		fs.writeFile('./posts.txt', JSON.stringify(postsList), "utf8", function(err){
-			if(err){
-				console.log(err);
-			}
-			else{
-				console.log("Success");
-				}
-			});
+        var tempPostsList = postsList;
+        
+		var file = path.normalize('.'+'/posts.txt');
+        fs.writeFile(file, '', function(err){
+		  for(var i = 0; i < tempPostsList.length; i++){
+                console.log(JSON.stringify(tempPostsList[i]));
+			     if(tempPostsList[i].id == content.id){
+				    tempPostsList[i].data = content.data;
+			     }
+            fs.appendFile(file,
+                          JSON.stringify(tempPostsList[i])+'\r\n',
+                          encoding='utf8',
+                          function(err){
+                            if (err) throw err;
+                          });
+            }
+            updateListOfPosts();    
+        });
+//		//overwrite the old posts.txt file
+//		fs.writeFile('./posts.txt', JSON.stringify(postsList), "utf8", function(err){
+//			if(err){
+//				console.log(err);
+//			}
+//			else{
+//				console.log("Success");
+//				}
+//			});
 		
     });
     

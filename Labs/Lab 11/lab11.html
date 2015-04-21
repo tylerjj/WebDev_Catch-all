@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 	<html lang="en">
 	<head>
-		<title>Lab 11 Login</title>
+		<title>Team18 Lab11</title>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="http://localhost:5000/socket.io/socket.io.js"></script>
         <style>
@@ -14,19 +14,16 @@
                 color:crimson;
             }
             #postDiv {
-                /*background-color:yellow;*/
                 display: none;
                 font-family:monospace;
             }
             #leftHalfDiv{
                 float:left;
-                font-weight:bold;
             }
             #centerDiv {
                 float:none;
             }
             #rightHalfDiv {
-                /*background-color:darkmagenta;*/
                 float:right;
             }
             .logoutButton {
@@ -37,31 +34,52 @@
                 color:black;
                 font-size:24px;
             }
+            .postNumber {
+                background-color:black;
+                color:white
+            }
+            #postNumber {
+                background-color:black;
+                color:white;
+            }
             .logoutButton {
                 float:right;
             }
             #onlineListDiv {
-                /*background-color:blue;*/
                 font-family:sans-serif;
                 float:none;
             }
             #postButtonsDiv 
             {
                 float:none;
-                /*float:left;*/
             }
             .postText {
                 float:none;
                 display: none;
             }
+            .timestamp {
+                background:rgba(255,255,255,.40);
+
+            }
+            .author {
+                background:rgba(255,255,255,.40);
+
+            }
+            #timestamp {
+                background:rgba(255,255,255,.90);
+
+            }
+            .json {
+                display:none;
+            }
             .post:disabled {
-                font-family:fantasy;
-                background-color:floralwhite;
+                font-family:sans-serif;
+                background-color:antiquewhite;
                 color:black;
             }
             .post:enabled{
-                font-family:fantasy;
-                background-color:floralwhite;
+                font-family:sans-serif;
+                background-color:white;
             }
             .makePostButton {
                 float:none;
@@ -69,9 +87,10 @@
             }
             .thisUser {
                 color:black;
+                font-style:oblique;
                 font-weight:bolder;
-                text-decoration-line:underline;
-                text-decoration-color: firebrick;
+                background:rgba(255,255,255,.75);
+
             }
             body {
                 background-image:url(http://bigbackground.com/wp-content/uploads/2013/07/beach-screensavers-large2.jpg);
@@ -137,18 +156,13 @@ $(document).ready(function() {
             } else onLoginFailure();
         });
     
-        // Listen for data to initialize page.
-        socket.on('initializePage', function(data){
-            
-        });
-    
         // Listen for data to alter post list.
         socket.on('updatePostList', function(data){
             console.log("Data: "+data);
             var postsList = JSON.parse(data);
             var items = [];
             $('#postList').empty();
-            //How to add a text area in. 
+            //Fill the post list.
             for (var item=postsList["posts"].length-1; item >= 0; item--){
                 var thisJSONStr = JSON.stringify(postsList["posts"][item]);
                 var thisJSONObj = JSON.parse(thisJSONStr);
@@ -157,63 +171,46 @@ $(document).ready(function() {
                 var json = "<p class='json' hidden>"+thisJSONStr+"</p>";
                 var author;
                 var textarea;
-                var timestamp = "<label class='timestamp'>["+thisJSONObj.timestamp+"]</label>";
+                var time = new Date(thisJSONObj.timestamp).toLocaleDateString()+" "+new Date(thisJSONObj.timestamp).toLocaleTimeString();
+                var timestamp = "<label class='timestamp'>["+time+"]</label>";
                 
+                //These posts are the ones made by the current client.
                 if (thisJSONObj.author==($('#username').val())){
-                $('#postList').append(
-                    $("<dt class='thisUser'>").append("Post #"+dtPostsNumber));
-                    author = "<label class='thisUser'>["+thisJSONObj.author+"]: "+"</lable>";
-                    textarea = "<textarea class='post' cols = 40 readonly>"+
+                    //Adding the 'postNumber' id to the thisUser class so that I can specify it for css later if necessary
+                    $('#postList').append(
+                        $("<dt class='thisUser' id='postNumber'>").append("Post #"+dtPostsNumber)
+                    );
+                    //Adding the 'author' id to the thisUser class so that I can specify it for css if necessary.
+                    author = "<label class='thisUser' id='author'>["+
+                                thisJSONObj.author+"]: "+
+                            "</lable>";
+                    //This textarea will end up being enabled.
+                    textarea = "<textarea class='post' rows = 5 cols = 40>"+
                                 thisJSONObj.data+
                                 "</textarea>";
-                } else {
+                } 
+                //These posts are those that aren't made by the current client.
+                else {
                     $('#postList').append(
-                        $('<dt>').append("Post #"+dtPostsNumber));
+                        $("<dt class='postNumber'>").append("Post #"+dtPostsNumber)
+                    );
                     author = "<label class='author'>["+thisJSONObj.author+"]: "+"</lable>";
-                    textarea = "<textarea class='post' cols = 40 disabled>"+
+                    //This textarea will end up being disabled.
+                    textarea = "<textarea class='post' rows = 5 cols = 40 disabled>"+
                                 thisJSONObj.data+
                                 "</textarea>";                    
                 }
-
+                // This is the container for the specific post.
                 var dd = "<dd class='value'>"+author+"<br>"+
                             textarea+"<br>"+timestamp+json+
                          "</dd>";
-//                $('#postList').append($('<dd>').attr('class','value').append(
-//                    $('<textarea></textrea>').attr(
-//                        'class','post','cols',40,'readonly').text(
-//                                "["+postsList["posts"][item].author+"]: " +
-//                                "\n\n"+postsList["posts"][item].timestamp) +
-//                    $('<p></p>').attr('class','json','hidden').text(json)
-//                                    ));
-                
-                //console.log($('#postList').eq(item).contents());
-                //dd = dd.replace(/(?:\r\n|\r|\n)/g, '<br />');
                 $('#postList').append(dd+"<br>");
-               // console.log("Item in user list: " + JSON.stringify(postsList["posts"][item]));
-                //items.push(dt+dd);
             }
-            //$('#postList').empty();
-            //$('#postList').append(items);
-//            var nodeList = document.getElementsByClassName("post");
-//            for (var i = 0; i<nodeList.length;i++){
-//                var domElement = nodeList[i];
-//                var jqElement = $('#postList').eq(i);
-//                console.log("Jquery Element: "+jqElement.text());
-//                var fontheight = jqElement.css("font-size").replace(/[^-\d\.]/g, '');
-//                console.log("Font height: "+fontheight);
-//                var scrollheight = domElement.scrollHeight;
-//                console.log("Scroll height: "+scrollheight);
-//                var originalheight = jqElement.css("height").replace(/[^-\d\.]/g, '');
-//                console.log("Original height: "+ originalheight);
-//                jqElement.css("height",(scrollheight*fontheight)+"px");
-//                var newheight = jqElement.css("height");
-//                console.log("New height: "+newheight);
-//            }
         });
     
         // Listen for data to alter online users list.
+        // JSON of the form: "{"onlineUsers":[{"username":...},{"username":...},...]}"
         socket.on('updateOnlineUsersList', function(data){
-            console.log("Data: "+data);
             var usersList = JSON.parse(data);
             var items = [];
             for (var item in usersList["onlineUsers"]){
@@ -224,7 +221,6 @@ $(document).ready(function() {
                 else {
                     value = "<li class='userOnline'>"+usersList["onlineUsers"][item]+"</li>";
                 }
-                console.log("Item in user list: " + usersList["onlineUsers"][item]);
                 items.push(value);
             }
             $('#onlineList').empty();
@@ -240,7 +236,6 @@ $(document).ready(function() {
             //Get username and password. 
             var uname = $('#username').val();
             var pword = $('#password').val();
-            console.log("username and password: "+uname+", "+pword);
             //get password/username from loginDiv
             if ((uname ==null || uname =="") || 
                 (pword ==null || pword=="")) {
@@ -255,15 +250,12 @@ $(document).ready(function() {
             
             var loginJSONStr = JSON.stringify(loginJSONObj);
             
-            console.log("JSON Obj: "+loginJSONObj);
-            console.log("JSON String: "+loginJSONStr);
             //websocket check to server
             socket.emit('validateLogin', loginJSONStr);
-
-            console.log("validateLogin was emitted.");
             return;
         });
     
+        // makePostButtonHandler
         $('#makePostButton').click(function(){
             $('#postText').val("");
             $('#makePostButton').css("display","none");
@@ -280,6 +272,7 @@ $(document).ready(function() {
             onLogoutSuccess();
         });
     
+        //This handler is for when when you send a new post.
         $('#postDiv').find($('#postButtonsDiv')).delegate("textarea", "keydown", function(e){
             if (e.which==13 && !e.shiftKey){
                 
@@ -289,7 +282,6 @@ $(document).ready(function() {
                 var timestamp = new Date();
                 
                 var postJSONObj = {"author":author,"data":data,"timestamp":timestamp};
-                console.log("Post object sent: "+JSON.stringify(postJSONObj));
                 $('#postText').css("display","none");
                 $('#makePostButton').css("display","block");
                 $('#postText').val("");
@@ -297,79 +289,55 @@ $(document).ready(function() {
                 socket.emit("newPost", postJSONObj);
             }
         });
-        $('#postListDiv').delegate("dd","click", function(){
-            var dd = $(this);
-            var text =  dd.contents().filter(function(){
-                return this.nodeType == 3;
-            }).text();
-            var jsonStr = ($(this).find('.json').text());
-            console.log("jsonStr value: "+jsonStr);
-            var jsonObj = JSON.parse(jsonStr);
-            
-            //console.log(text);
-            console.log("Author: "+jsonObj.author);
-            if ($('#username').val()==jsonObj.author){
-                $(this).find('.post').removeAttr('readonly');
-                $(this).delegate("textarea","keydown", function(e) {
-                    if (e.which==13 && !e.shiftKey){
-                        var newtext = $(this).val();
-                        jsonObj["data"]=newtext;
-                        console.log("Attempt to figure out textarea text: "+newtext);
-                        //jsonObj['data']="foo";
-                        socket.emit("editPost",jsonObj);
-                        $(this).attr("readonly","readonly");
-                        console.log("Json after edit: "+JSON.stringify(jsonObj));
-                    }
-                });
-            }
+    
+        //This handler changes the font of a post when the client clicks on one to edit.
+        $('#postListDiv').on("click", "textarea", function(e) {
+            $(this).css("font-family","monospace");
+            $(this).on("blur", function(){
+                $(this).css("font-family","sans-serif")
+            });
         });
+    
+        //This handler deals with edits. 
+        $('#postListDiv').on("keypress","dd",function(e) {
+            var dd = $(this);
+            var jsonStr = ($(this).find('.json').text());
+            var jsonObj = JSON.parse(jsonStr);            
+            if ($('#username').val()==jsonObj.author){
+                var newtext = $(this).find('.post').val();
+                jsonObj["data"]=newtext;
+                if (e.which==13 && !e.shiftKey){
+                    e.preventDefault();
+                    var newtext = $(this).find('.post').val();
+                    jsonObj["data"]=newtext;
+                    socket.emit("editPost",jsonObj);
+                    console.log("Json after edit: "+JSON.stringify(jsonObj));
+                    e.preventDefault();
+                    }
+            }
+        });            
+        
+        // Helper function for successful login attempt.
         function onLoginSuccess() {
             document.getElementById("loginDiv").style.display="none";
             document.getElementById("postDiv").style.display="block";
             socket.emit("loadData", $('#username').val());
         }
+        // Helper function for failed login attempt.
         function onLoginFailure() {
             document.getElementById("loginFailed").style.visibility="visible";
         }
-    
-    
-        function displayPostList(arr) {
-
-        }
-        function appendPost(author, message) {
-
-        }
-        function displayOnlineList(arr) {
-            var out = "";
-            var i;
-            for(i = 0; i<arr.length; i++) {
-                out += arr[i].display + '<br>';
-            }
-            document.getElementById("onlineListDiv").innerHTML = out;
-        }
+        // Helper function for logout.
         function logout() {
             //websocket update to server
             onLogoutSuccess();
         }
+        // Helper function for successful logout.
         function onLogoutSuccess() {
             document.getElementById("postDiv").style.display="none";
             document.getElementById("loginDiv").style.display="block";
             document.getElementById("loginFailed").style.visibility="hidden";
         }
-        socket.on('loginResponse', function(loginSuccess) {
-            if (loginSuccess) {
-                onLoginSuccess();
-            } else onLoginFailure();
-        });
-        socket.on('initializePage', function(data){
-            
-        });
-        socket.on('updatePostList', function(data){
-            
-        });
-        socket.on('updateOnlineUsersList', function(data){
-            
-        });
 });
         </script>
 </html>
