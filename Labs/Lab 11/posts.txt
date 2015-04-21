@@ -2,3 +2,4 @@
 {"id":"3","author":"testUN1","data":"This is my third post","timestamp":"2015-04-20T00:26:43.647Z"}
 {"id":"0","author":"testUN1","data":"This is my fourth post.","timestamp":"2015-04-20T00:27:02.831Z"}
 {"id":"1", "author":"testUN2","data":"This is the first post that was made.\n\n","timestamp":"2015-04-19T19:51:27.113Z"}
+{"id":4,"author":"testUN1","data":"testing123","timestamp":"2015-04-21T21:50:21.474Z"}

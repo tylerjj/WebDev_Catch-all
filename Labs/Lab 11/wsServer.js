@@ -160,18 +160,20 @@ io.sockets.on('connection', function(socket) {
     // TODO: HANDLES A NEW POST SENT FROM A CLIENT
     // incoming JSON: {"author": ..., "data": ..., "timestamp": ...}
     socket.on('newPost', function(content) {
-        // Open posts.txt file.
-        
-        // Open write stream.
+			// Open posts.txt file.
+			var file = path.normalize('.'+'/posts.txt');
+			// Open write stream.
         
         // Write new post to posts.txt
-        
+			
         // Add post to the postsList array.
-        
         // Sort posts
-        var id = postsList.size-1;
+        var id = postsList.length;
         var newJSON = {"id":id,"author":content.author,"data":content.data,"timestamp":content.timestamp};
         postsList.push(newJSON);
+		fs.appendFile(file,'\r\n' + JSON.stringify(newJSON), encoding='utf8', function(err){
+				if(err) throw err;
+			});
         // Emit an updatePostList for all users.
         updateListOfPosts();
         //io.sockets.emit('updatePostList', data);
@@ -181,6 +183,23 @@ io.sockets.on('connection', function(socket) {
     // incoming JSON: {"id": ..., "author": ..., "data": ..., "timestamp": ...}
     socket.on('editPost', function(content) {
         // Convert timestamp to index
+		for(var i = 0; i < postsList.length; i++){
+			if(postsList[i].id === content.id){
+				postsList[i].data = content.data;
+			}
+		}
+		
+		var file = path.normalize('.'+'/posts.txt');
+		
+		fs.writeFile(file, JSON.stringify(postsList), "utf8", function(err){
+			if(err){
+				console.log(err);
+			}
+			else{
+				console.log("Success");
+				}
+			});
+		
     });
     
     // DONE
