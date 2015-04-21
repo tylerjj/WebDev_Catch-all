@@ -189,9 +189,10 @@ io.sockets.on('connection', function(socket) {
 			}
 		}
 		
-		var file = path.normalize('.'+'/posts.txt');
+		//var file = path.normalize('.'+'/posts.txt');
 		
-		fs.writeFile(file, JSON.stringify(postsList), "utf8", function(err){
+		//overwrite the old posts.txt file
+		fs.writeFile('./posts.txt', JSON.stringify(postsList), "utf8", function(err){
 			if(err){
 				console.log(err);
 			}
