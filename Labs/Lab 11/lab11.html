@@ -15,23 +15,27 @@
             }
             #postDiv {
                 /*background-color:yellow;*/
-                float:left;
                 display: none;
                 font-family:monospace;
             }
-            #postHeaderDiv {
+            #leftHalfDiv{
+                float:left;
+                font-weight:bold;
+            }
+            #centerDiv {
+                float:none;
+            }
+            #rightHalfDiv {
                 /*background-color:darkmagenta;*/
                 float:right;
             }
             .logoutButton {
                 float:right;
             }
-            #listDiv {
-            }
             #postListDiv {
-                /*background-color:forestgreen;*/
-                font-family:sans-serif;
                 float:left;
+                color:black;
+                font-size:24px;
             }
             .logoutButton {
                 float:right;
@@ -39,27 +43,45 @@
             #onlineListDiv {
                 /*background-color:blue;*/
                 font-family:sans-serif;
-                float:right;
+                float:none;
             }
-            #postButtonsDiv {
-                clear:both;
-                float:left;
-               /*background-color:red;*/
-               align-self: auto;
+            #postButtonsDiv 
+            {
+                float:none;
+                /*float:left;*/
             }
             .postText {
+                float:none;
                 display: none;
             }
+            .post:disabled {
+                font-family:fantasy;
+                background-color:floralwhite;
+                color:black;
+            }
+            .post:enabled{
+                font-family:fantasy;
+                background-color:floralwhite;
+            }
             .makePostButton {
-                float:left;
+                float:none;
                 display: block;
+            }
+            .thisUser {
+                color:black;
+                font-weight:bolder;
+                text-decoration-line:underline;
+                text-decoration-color: firebrick;
+            }
+            body {
+                background-image:url(http://bigbackground.com/wp-content/uploads/2013/07/beach-screensavers-large2.jpg);
             }
         </style>
         </head>
     <body>
         <div class = "loginDiv" id = "loginDiv">
             <h1>
-                Lab 11 Login Div
+                Lab 11 Login Page
             </h1>
             <p class="loginFailed" id="loginFailed">Username/Password not found. Please try again.</p>
             <input type="text" name = "username" placeholder="Username" id="username">
@@ -67,34 +89,37 @@
             <button class = "submitButton" id = "submitButton">Submit</button>
         </div>
         <div class = "postDiv" id = "postDiv">
-            <div id="postHeaderDiv">
+            <div id="leftHalfDiv">
                 <h1>
-                    First Header Div
+                    Lab 11 Post Page
+                </h1>
+                <div id="postListDiv">
+                    <h1>Posts</h1>
+                    
+                    <dl id="postList">
+                    </dl>
+                </div>           
+            </div>
+            <p>
+            <div id="rightHalfDiv">
+                <h1>
+                    Web-Post Application
                 </h1>
                 <h2>
                     <button class ="logoutButton" id="logoutButton">Logout</button>
                 </h2>
-            </div>
-            <h1>
-                Lab 11 Post Div
-            </h1>
-            <div id="listsDiv">
-                <div id="postListDiv">
-                    <h1>Posts</h1>
-                    <dl id="postList">
-                    </dl>
-                </div>
                 <div id="onlineListDiv">
                     <h1>Users Online</h1>
                     <ul id="onlineList">
                     </ul>
                 </div>
+                <div id="postButtonsDiv">
+                    <h1>Make a Post</h1>
+                    <textarea class = "postText" id="postText" rows=10 cols=30></textarea>
+                    <button class = "makePostButton" id = "makePostButton">Make a Post</button>
+                </div>
             </div>
-            <div id="postButtonsDiv">
-                <h1>Buttons Div</h1>
-                <textarea class = "postText" id="postText" rows=10 cols=30></textarea>
-                <button class = "makePostButton" id = "makePostButton">Make a Post</button>
-            </div>
+        </p>
         </div>
         </body>
     <script>
@@ -121,16 +146,69 @@ $(document).ready(function() {
         socket.on('updatePostList', function(data){
             console.log("Data: "+data);
             var postsList = JSON.parse(data);
-            
             var items = [];
-            for (var item in postsList["posts"]){
-                var value = "<li>" + "["+ postsList["posts"][item].author+"]: "+postsList["posts"][item].data+"</li>";
-                
-                console.log("Item in user list: " + JSON.stringify(postsList["posts"][item]));
-                items.push(value);
-            }
             $('#postList').empty();
-            $('#postList').append(items);            
+            //How to add a text area in. 
+            for (var item=postsList["posts"].length-1; item >= 0; item--){
+                var thisJSONStr = JSON.stringify(postsList["posts"][item]);
+                var thisJSONObj = JSON.parse(thisJSONStr);
+                console.log("This item's json string is: "+thisJSONStr);
+                var dtPostsNumber = thisJSONObj.id;
+                var json = "<p class='json' hidden>"+thisJSONStr+"</p>";
+                var author;
+                var textarea;
+                var timestamp = "<label class='timestamp'>["+thisJSONObj.timestamp+"]</label>";
+                
+                if (thisJSONObj.author==($('#username').val())){
+                $('#postList').append(
+                    $("<dt class='thisUser'>").append("Post #"+dtPostsNumber));
+                    author = "<label class='thisUser'>["+thisJSONObj.author+"]: "+"</lable>";
+                    textarea = "<textarea class='post' cols = 40 readonly>"+
+                                thisJSONObj.data+
+                                "</textarea>";
+                } else {
+                    $('#postList').append(
+                        $('<dt>').append("Post #"+dtPostsNumber));
+                    author = "<label class='author'>["+thisJSONObj.author+"]: "+"</lable>";
+                    textarea = "<textarea class='post' cols = 40 disabled>"+
+                                thisJSONObj.data+
+                                "</textarea>";                    
+                }
+
+                var dd = "<dd class='value'>"+author+"<br>"+
+                            textarea+"<br>"+timestamp+json+
+                         "</dd>";
+//                $('#postList').append($('<dd>').attr('class','value').append(
+//                    $('<textarea></textrea>').attr(
+//                        'class','post','cols',40,'readonly').text(
+//                                "["+postsList["posts"][item].author+"]: " +
+//                                "\n\n"+postsList["posts"][item].timestamp) +
+//                    $('<p></p>').attr('class','json','hidden').text(json)
+//                                    ));
+                
+                //console.log($('#postList').eq(item).contents());
+                //dd = dd.replace(/(?:\r\n|\r|\n)/g, '<br />');
+                $('#postList').append(dd+"<br>");
+               // console.log("Item in user list: " + JSON.stringify(postsList["posts"][item]));
+                //items.push(dt+dd);
+            }
+            //$('#postList').empty();
+            //$('#postList').append(items);
+//            var nodeList = document.getElementsByClassName("post");
+//            for (var i = 0; i<nodeList.length;i++){
+//                var domElement = nodeList[i];
+//                var jqElement = $('#postList').eq(i);
+//                console.log("Jquery Element: "+jqElement.text());
+//                var fontheight = jqElement.css("font-size").replace(/[^-\d\.]/g, '');
+//                console.log("Font height: "+fontheight);
+//                var scrollheight = domElement.scrollHeight;
+//                console.log("Scroll height: "+scrollheight);
+//                var originalheight = jqElement.css("height").replace(/[^-\d\.]/g, '');
+//                console.log("Original height: "+ originalheight);
+//                jqElement.css("height",(scrollheight*fontheight)+"px");
+//                var newheight = jqElement.css("height");
+//                console.log("New height: "+newheight);
+//            }
         });
     
         // Listen for data to alter online users list.
@@ -139,7 +217,13 @@ $(document).ready(function() {
             var usersList = JSON.parse(data);
             var items = [];
             for (var item in usersList["onlineUsers"]){
-                var value = "<li>"+usersList["onlineUsers"][item]+"</li>";
+                var value;
+                if (usersList["onlineUsers"][item]==($('#username').val())){
+                    value = "<li class='thisUser'>"+usersList["onlineUsers"][item]+"</li>";
+                }
+                else {
+                    value = "<li class='userOnline'>"+usersList["onlineUsers"][item]+"</li>";
+                }
                 console.log("Item in user list: " + usersList["onlineUsers"][item]);
                 items.push(value);
             }
@@ -196,7 +280,7 @@ $(document).ready(function() {
             onLogoutSuccess();
         });
     
-        $('#postDiv').delegate("textarea", "keydown", function(e){
+        $('#postDiv').find($('#postButtonsDiv')).delegate("textarea", "keydown", function(e){
             if (e.which==13 && !e.shiftKey){
                 
                 console.log("Enter button was pressed.");
@@ -211,6 +295,32 @@ $(document).ready(function() {
                 $('#postText').val("");
                 //send postVal
                 socket.emit("newPost", postJSONObj);
+            }
+        });
+        $('#postListDiv').delegate("dd","click", function(){
+            var dd = $(this);
+            var text =  dd.contents().filter(function(){
+                return this.nodeType == 3;
+            }).text();
+            var jsonStr = ($(this).find('.json').text());
+            console.log("jsonStr value: "+jsonStr);
+            var jsonObj = JSON.parse(jsonStr);
+            
+            //console.log(text);
+            console.log("Author: "+jsonObj.author);
+            if ($('#username').val()==jsonObj.author){
+                $(this).find('.post').removeAttr('readonly');
+                $(this).delegate("textarea","keydown", function(e) {
+                    if (e.which==13 && !e.shiftKey){
+                        var newtext = $(this).val();
+                        jsonObj["data"]=newtext;
+                        console.log("Attempt to figure out textarea text: "+newtext);
+                        //jsonObj['data']="foo";
+                        socket.emit("editPost",jsonObj);
+                        $(this).attr("readonly","readonly");
+                        console.log("Json after edit: "+JSON.stringify(jsonObj));
+                    }
+                });
             }
         });
         function onLoginSuccess() {

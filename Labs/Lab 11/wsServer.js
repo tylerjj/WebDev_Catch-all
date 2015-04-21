@@ -74,7 +74,6 @@ function initializeServer(){
                 console.log("\n   postsList post-sort:\n     "+JSON.stringify({"posts": postsList}));
                 //TODO: 
                 //Clear contents of posts.txt and re-write the updated postsList line by line.
-                
             });
         }
         else {
@@ -184,11 +183,11 @@ io.sockets.on('connection', function(socket) {
     socket.on('editPost', function(content) {
         // Convert timestamp to index
 		for(var i = 0; i < postsList.length; i++){
-			if(postsList[i].id === content.id){
+			if(postsList[i].id == content.id){
 				postsList[i].data = content.data;
 			}
 		}
-		
+		updateListOfPosts();
 		//var file = path.normalize('.'+'/posts.txt');
 		
 		//overwrite the old posts.txt file

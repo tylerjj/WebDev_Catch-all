@@ -1,5 +1,13 @@
-{"id":"2", "author":"testUN1","data":"This is the second post that has been made.","timestamp":"2015-04-19T21:50:24.606Z"}
-{"id":"3","author":"testUN1","data":"This is my third post","timestamp":"2015-04-20T00:26:43.647Z"}
-{"id":"0","author":"testUN1","data":"This is my fourth post.","timestamp":"2015-04-20T00:27:02.831Z"}
-{"id":"1", "author":"testUN2","data":"This is the first post that was made.\n\n","timestamp":"2015-04-19T19:51:27.113Z"}
-{"id":4,"author":"testUN1","data":"testing123","timestamp":"2015-04-21T21:50:21.474Z"}
+{"id":"0","author":"testUN2","data":"This is the first post that was made.\n\n","timestamp":"2015-04-19T19:51:27.113Z"}
+{"id":"1","author":"testUN1","data":"This is the second post that has been made.","timestamp":"2015-04-19T21:50:24.606Z"}
+{"id":"2","author":"testUN1","data":"This is my third post","timestamp":"2015-04-20T00:26:43.647Z"}
+{"id":"3","author":"testUN1","data":"This is my fourth post.","timestamp":"2015-04-20T00:27:02.831Z"}
+{"id":"4","author":"testUN1","data":"testing123!","timestamp":"2015-04-21T21:50:21.474Z"}
+{"id":5,"author":"testUN2","data":"Hello there","timestamp":"2015-04-21T00:46:20.360Z"}
+{"id":6,"author":"testUN1","data":"Do you like to mombo?","timestamp":"2015-04-21T01:21:16.819Z"}
+{"id":7,"author":"testUN1","data":"Did I fix the textarea issue?","timestamp":"2015-04-21T01:22:20.946Z"}
+{"id":8,"author":"testUN2","data":"Let's send a message from this person.","timestamp":"2015-04-21T01:56:21.716Z"}
+{"id":9,"author":"testUN1","data":"Testing posts going on top!","timestamp":"2015-04-21T02:00:58.951Z"}
+{"id":10,"author":"testUN1","data":"I can edit stuff :D ","timestamp":"2015-04-21T02:03:08.903Z"}
+{"id":11,"author":"tjj","data":"TJ's first message!","timestamp":"2015-04-21T02:47:42.890Z"}
+{"id":12,"author":"testUN2","data":"I haven't posted in a while.","timestamp":"2015-04-21T03:08:08.771Z"}

@@ -1,2 +1,4 @@
 {"username": "testUN1", "password": "testPW1"}
 {"username": "testUN2", "password": "testPW2"}
+{"username": "tjj", "password": "coms319"}
+{"username": "guan", "password":"cs319"}
